@@ -15,13 +15,13 @@ router.get("/users", getUsers);
 
 router.get("/user/:userId", getUserById);
 
+router.get("/users-suggestion", getAutoSuggestUsers);
+
 router.post(
     "/create-user",
     userValidationMiddelware(schema.bodySchema),
     postUser
 );
-
-router.post("/users-suggestion", getAutoSuggestUsers);
 
 router.put("/update-user/:userId", updateUser);
 
