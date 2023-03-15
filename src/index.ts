@@ -12,5 +12,5 @@ app.use(express.json());
 app.use(userRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Server is up and Running => http://localhost:${3000}`);
+    console.log(`Server is up and Running => http://localhost:${PORT}`);
 });

@@ -1,56 +1,49 @@
 const { v4: uuidv4 } = require("uuid");
-
-const User = require("../Model/User");
+import type { Request, Response } from "express";
+import {User,UserSchema} from "../Model/UserCopy"
 const userData = require("../Data/userData");
 const sortUsersByLogin = require("../utils/sortUsersByLogin");
 
-exports.getUsers = (req, res, next) => {
-    const user = userData.filter((user) => user.isDeleted);
-    res.json(user);
+exports.getUsers = (req: Request, res: Response, next) => {
+    const user = userData.filter((user:UserSchema) => !user.isDeleted);
+    return res.status(200).json(user);
 };
 
 exports.getUserById = (req, res, next) => {
     const userId = req.userId;
     const user = userData.find((user) => userId === user.id);
-    res.json(user);
+    return res.status(200).json(user);
 };
 
 exports.postUser = (req, res, next) => {
     const id = uuidv4();
     const { login, password, age, isDeleted } = req?.body;
-    console.log(`age type: ${typeof age}`);
-    console.log(`isDeleted type: ${typeof isDeleted}`);
-
     const newUser = new User(id, login, password, age, isDeleted);
     userData.push(newUser);
-    res.json(newUser);
+    return res.status(200).json(newUser);
 };
 
 exports.updateUser = (req, res, next) => {
     const userId = req?.params?.userId.trim();
     const { login, password, age, isDeleted } = req?.body;
-    const userIndex = userData.findIndex((user) => user.id === userId);
+    const userIndex = userData.findIndex((user:UserSchema) => user.id === userId);
     if (userIndex === -1) {
-        res.json("oops! user not found........");
+        return res.status(404).json("oops! user not found........");
     }
-
-    userData[userIndex].login = login;
-    userData[userIndex].password = password;
-    userData[userIndex].age = age;
-    userData[userIndex].isDeleted = isDeleted;
-
-    res.json(userData[userIndex]);
+    const updatedUser = { login, password, age, isDeleted };
+    userData[userIndex] = { ...userData[userIndex], ...updatedUser };
+    return res.json(userData[userIndex]);
 };
 
 exports.deleteUser = (req, res, next) => {
     const userId = req?.params?.userId;
     console.log(userId);
-    const userIndex = userData.findIndex((user) => user.id === userId);
+    const userIndex = userData.findIndex((user:UserSchema) => user.id === userId);
     if (userIndex === -1) {
-        res.json("oops! user not found........");
+        return res.status(404).json("oops! user not found........");
     }
     userData[userIndex].isDeleted = !userData[userIndex].isDeleted;
-    res.json("from delete user");
+    return res.json("from delete user");
 };
 
 exports.getAutoSuggestUsers = (req, res, next) => {
@@ -63,8 +56,8 @@ exports.getAutoSuggestUsers = (req, res, next) => {
     const updatedLimit = Math.min(Number(limit), users.length);
     const regex = new RegExp(`${loginSubstring}`, "g");
 
-    const sugestedUserArray = [];
-    users.forEach((user) => {
+    const sugestedUserArray:UserSchema[] = [];
+    users.forEach((user:UserSchema) => {
         if (sugestedUserArray.length === updatedLimit) return;
         const match = user.login.match(regex);
         if (match) {
@@ -72,5 +65,5 @@ exports.getAutoSuggestUsers = (req, res, next) => {
         }
     });
     console.log(sugestedUserArray);
-    res.json(sugestedUserArray);
+    return res.json(sugestedUserArray);
 };

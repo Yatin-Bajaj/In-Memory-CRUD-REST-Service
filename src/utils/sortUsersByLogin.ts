@@ -1,4 +1,6 @@
-const customSorter = (user1, user2) => {
+import {User,UserSchema} from "../Model/UserCopy"
+
+const customSorter = (user1:UserSchema, user2:UserSchema) => {
     if (user1.login < user2.login) {
         return 1;
     }
@@ -8,7 +10,7 @@ const customSorter = (user1, user2) => {
     return 0;
 };
 
-const sortUserByLogin = (users) => {
+const sortUserByLogin = (users:UserSchema[]) => {
     return users.sort(customSorter);
 };
 

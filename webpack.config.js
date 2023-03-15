@@ -1,13 +1,19 @@
-const path = require('path');
+const path = require("path");
+const webpack = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const ROOT = path.resolve(__dirname, "src");
+const DESTINATION = path.resolve(__dirname, "dist");
 
 module.exports = {
-    entry: './src/user.ts',
+    context: ROOT,
+    entry: "./index.ts",
+    target: "node",
     // devtool: 'source-map',
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                use: 'ts-loader',
+                use: "ts-loader",
                 exclude: /node_modules/,
             },
             // Compile JavaScript files
@@ -15,24 +21,32 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader',
+                    loader: "babel-loader",
                     options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
-            }
+                        presets: ["@babel/preset-env"],
+                    },
+                },
+            },
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: [".tsx", ".ts", ".js"],
+        modules: [ROOT, "node_modules"],
     },
     output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
+        filename: "[name].bundle.js",
+        path: DESTINATION,
     },
     devServer: {
-        static: path.join(__dirname, "dist"),
+        static: DESTINATION,
         compress: true,
         port: 9000,
     },
+    plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: path.resolve(__dirname, "package.json"), to: "./package.json" },
+            ],
+        }),
+    ],
 };
