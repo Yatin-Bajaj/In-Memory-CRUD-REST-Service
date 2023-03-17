@@ -17,5 +17,5 @@ export class User implements UserSchema {
 }
 
 module.exports = {
-    User
-}
+    User,
+};
