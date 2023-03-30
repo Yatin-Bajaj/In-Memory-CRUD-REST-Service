@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "rootDir": ".",
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}
